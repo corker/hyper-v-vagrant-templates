@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+  config.vm.box = "hyperv-windows-10"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.provider "hyperv"
+  config.vm.network "public_network", bridge: "packer-hyperv-iso"
+  config.vm.communicator = "winrm"
+  config.vm.provider "hyperv" do |h|
+	h.cpus = 2
+    h.enable_virtualization_extensions = true
+    h.linked_clone = true
+	h.maxmemory = 8000
+    h.vm_integration_services = {
+      guest_service_interface: true,
+	  heartbeat: true,
+	  key_value_pair_exchange: true,
+	  shutdown: true,
+	  time_synchronization: true,
+	  vss: true
+    }
+  end
+
+  config.vm.define "robo01"
+  config.vm.define "robo02"
+  config.vm.define "robo03"
+  config.vm.define "mang01"
+  config.vm.define "mang02"
+  config.vm.define "mang03"
+end
